@@ -5,16 +5,8 @@ class DocumentTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      docList: [
-        {
-          state: 4,
-          busy: false,
-        },
-        {
-          state: 6,
-          busy: false,
-        },
-      ],
+      docList: [],
+      logList: [],
     };
   }
 
@@ -52,6 +44,15 @@ class DocumentTable extends React.Component {
       setTimeout(() => {
         this.nextState(length - 1);
       }, this.getActionTime());
+      this.addLog(`Documento ${length - 1} - ${this.getStateLabel(1)}`)
+      return nextState;
+    });
+  };
+
+  addLog = (message) => {
+    this.setState((prevState) => {
+      const nextState = prevState;
+      nextState.logList.unshift(message);
       return nextState;
     });
   };
@@ -59,9 +60,12 @@ class DocumentTable extends React.Component {
   nextState = (id) => {
     this.setState((prevState) => {
       const nextState = prevState;
+      let restarted = false;
       if (prevState.docList[id].state === 6) {
         nextState.docList[id].state = 1;
         nextState.docList[id].busy = true;
+        this.addLog(`Documento ${id} - Geração Reiniciada`)
+        restarted = true;
       } else {
         nextState.docList[id].state += 1;
         if (
@@ -79,6 +83,9 @@ class DocumentTable extends React.Component {
           this.nextState(id);
         }, this.getActionTime());
       }
+      if(!restarted) {
+        this.addLog(`Documento ${id} - ${this.getStateLabel(nextState.docList[id].state)}`)
+      }
       return nextState;
     });
   };
@@ -94,7 +101,12 @@ class DocumentTable extends React.Component {
     return (
       <div style={{ marginTop: "10px" }}>
         <Button onClick={() => this.generateDocument()}>Gerar Documento</Button>
-        <Table striped bordered hover style={{ marginTop: "10px" }}>
+        <Table
+          striped
+          bordered
+          hover
+          style={{ marginTop: "10px" }}
+        >
           <thead>
             <tr>
               <th>#</th>
@@ -108,7 +120,6 @@ class DocumentTable extends React.Component {
                 <tr key={id}>
                   <td>{id}</td>
                   <td>{this.getStateLabel(doc.state)}</td>
-                  {/* <td>{doc.busy ? "Ocupado" : "Livre"}</td> */}
                   <td>
                     <Button
                       onClick={() => this.nextState(id)}
@@ -134,9 +145,35 @@ class DocumentTable extends React.Component {
       </div>
     );
   };
-  
+
+  renderLog = () => {
+    return (
+      <Table>
+        <thead>
+          <tr>
+            <th>Mensagens de Log</th>
+          </tr>
+        </thead>
+        <tbody>
+          {this.state.logList.map((value, id) => {
+            return (
+              <tr key={id}>
+                <td>{value}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
+    );
+  };
+
   render() {
-    return this.renderTable();
+    return (
+      <>
+        {this.renderTable()}
+        {this.renderLog()}
+      </>
+    );
   }
 }
 
