@@ -1,0 +1,22 @@
+.actionButton {
+    margin-top: 10px;
+}
+
+.render {
+    margin-top: 20px;
+    overflow-y: auto;
+    max-height: 375px;
+    border: solid gray;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar {
+    width: 7px;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #505050;
+    opacity: 0.5;
+    border-radius: 5px;
+}

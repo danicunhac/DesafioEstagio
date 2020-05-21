@@ -100,70 +100,77 @@ class DocumentTable extends React.Component {
   renderTable = () => {
     return (
       <div style={{ marginTop: "10px" }}>
-        <Button onClick={() => this.generateDocument()}>Gerar Documento</Button>
-        <Table
-          striped
-          bordered
-          hover
-          style={{ marginTop: "10px" }}
-        >
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Estado do Documento</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.state.docList.map((doc, id) => {
-              return (
-                <tr key={id}>
-                  <td>{id}</td>
-                  <td>{this.getStateLabel(doc.state)}</td>
-                  <td>
-                    <Button
-                      onClick={() => this.nextState(id)}
-                      disabled={doc.busy}
-                    >
-                      {this.getActionLabel(doc.state)}{" "}
-                      {doc.busy ? (
-                        <Spinner
-                          as="span"
-                          animation="border"
-                          size="sm"
-                          role="status"
-                          aria-hidden="true"
-                        />
-                      ) : null}
-                    </Button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
+        <Button className="actionButton" onClick={() => this.generateDocument()}>Gerar Documento</Button>
+        <div className="render">
+          <Table
+            striped
+            bordered
+            hover
+            style={{ marginTop: "10px" }}
+            responsive="md">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Estado do Documento</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.docList.map((doc, id) => {
+                return (
+                  <tr key={id}>
+                    <td>{id}</td>
+                    <td>{this.getStateLabel(doc.state)}</td>
+                    <td>
+                      <Button
+                        onClick={() => this.nextState(id)}
+                        disabled={doc.busy}
+                      >
+                        {this.getActionLabel(doc.state)}{" "}
+                        {doc.busy ? (
+                          <Spinner
+                            as="span"
+                            animation="border"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                          />
+                        ) : null}
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        </div>
       </div>
     );
   };
 
   renderLog = () => {
     return (
-      <Table>
-        <thead>
-          <tr>
-            <th>Mensagens de Log</th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.state.logList.map((value, id) => {
-            return (
-              <tr key={id}>
-                <td>{value}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
+      <div className="render">
+        <Table 
+        hover
+        bordered
+        responsive="md">
+          <thead>
+            <tr>
+              <th>Mensagens de Log</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.logList.map((value, id) => {
+              return (
+                <tr key={id}>
+                  <td>{value}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+      </div>
     );
   };
 
