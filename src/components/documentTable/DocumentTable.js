@@ -44,15 +44,18 @@ class DocumentTable extends React.Component {
       setTimeout(() => {
         this.nextState(length - 1);
       }, this.getActionTime());
-      this.addLog(`Documento ${length - 1} - ${this.getStateLabel(1)}`)
+      this.addLog(`Documento ${length - 1} - ${this.getStateLabel(1)}`);
       return nextState;
     });
   };
 
   addLog = (message) => {
+    const date = new Date();
     this.setState((prevState) => {
       const nextState = prevState;
-      nextState.logList.unshift(message);
+      nextState.logList.unshift(
+        `${message} às ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+      );
       return nextState;
     });
   };
@@ -64,7 +67,7 @@ class DocumentTable extends React.Component {
       if (prevState.docList[id].state === 6) {
         nextState.docList[id].state = 1;
         nextState.docList[id].busy = true;
-        this.addLog(`Documento ${id} - Geração Reiniciada`)
+        this.addLog(`Documento ${id} - Geração Reiniciada`);
         restarted = true;
       } else {
         nextState.docList[id].state += 1;
@@ -83,8 +86,10 @@ class DocumentTable extends React.Component {
           this.nextState(id);
         }, this.getActionTime());
       }
-      if(!restarted) {
-        this.addLog(`Documento ${id} - ${this.getStateLabel(nextState.docList[id].state)}`)
+      if (!restarted) {
+        this.addLog(
+          `Documento ${id} - ${this.getStateLabel(nextState.docList[id].state)}`
+        );
       }
       return nextState;
     });
@@ -99,50 +104,56 @@ class DocumentTable extends React.Component {
 
   renderTable = () => {
     return (
-      <div style={{ marginTop: "10px" }}>
-        <Button className="actionButton" onClick={() => this.generateDocument()}>Gerar Documento</Button>
+      <div>
+        <Button
+          className="actionButton"
+          onClick={() => this.generateDocument()}
+        >
+          Gerar Documento
+        </Button>
         <div className="render">
-          <Table
-            striped
-            bordered
-            hover
-            style={{ marginTop: "10px" }}
-            responsive="md">
+          <Table striped hover size="sm" style={{ marginBottom: "0px" }}>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Estado do Documento</th>
-                <th>Ação</th>
+                <th className="header-small">#</th>
+                <th className="header-large">Estado do Documento</th>
+                <th className="header-large">Ação</th>
               </tr>
             </thead>
-            <tbody>
-              {this.state.docList.map((doc, id) => {
-                return (
-                  <tr key={id}>
-                    <td>{id}</td>
-                    <td>{this.getStateLabel(doc.state)}</td>
-                    <td>
-                      <Button
-                        onClick={() => this.nextState(id)}
-                        disabled={doc.busy}
-                      >
-                        {this.getActionLabel(doc.state)}{" "}
-                        {doc.busy ? (
-                          <Spinner
-                            as="span"
-                            animation="border"
-                            size="sm"
-                            role="status"
-                            aria-hidden="true"
-                          />
-                        ) : null}
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
           </Table>
+          <div className="limited-table-body">
+            <Table striped hover size="sm" textAlign="center">
+              <tbody>
+                {this.state.docList.map((doc, id) => {
+                  return (
+                    <tr key={`Doc-${id}`}>
+                      <td className="header-small">{id}</td>
+                      <td className="header-large">
+                        {this.getStateLabel(doc.state)}
+                      </td>
+                      <td className="header-large">
+                        <Button
+                          onClick={() => this.nextState(id)}
+                          disabled={doc.busy}
+                        >
+                          {this.getActionLabel(doc.state)}{" "}
+                          {doc.busy ? (
+                            <Spinner
+                              as="span"
+                              animation="border"
+                              size="sm"
+                              role="status"
+                              aria-hidden="true"
+                            />
+                          ) : null}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
         </div>
       </div>
     );
@@ -151,25 +162,26 @@ class DocumentTable extends React.Component {
   renderLog = () => {
     return (
       <div className="render">
-        <Table 
-        hover
-        bordered
-        responsive="md">
+        <Table hover bordered size="sm" style={{ marginBottom: "0px" }}>
           <thead>
             <tr>
-              <th>Mensagens de Log</th>
+              <th style={{ width: "600px" }}>Mensagens de Log</th>
             </tr>
           </thead>
-          <tbody>
-            {this.state.logList.map((value, id) => {
-              return (
-                <tr key={id}>
-                  <td>{value}</td>
-                </tr>
-              );
-            })}
-          </tbody>
         </Table>
+        <div className="limited-table-body">
+          <Table hover bordered size="sm">
+            <tbody>
+              {this.state.logList.map((value, id) => {
+                return (
+                  <tr key={`Log-${id}`}>
+                    <td style={{ width: "600px" }}>{value}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        </div>
       </div>
     );
   };
